@@ -6,6 +6,12 @@ const Button = ({onClick, label}) => {
   )
 }
 
+const StatisticLine = ({label, value}) => {
+  return (
+    <p>{label} {value}</p>
+  )
+}
+
 const Statistics = ({stats}) => {
   const totalFeedback = (stats.good + stats.bad + stats.neutral)
   const averageFeedback = (stats.good - stats.bad) / totalFeedback
@@ -23,12 +29,12 @@ const Statistics = ({stats}) => {
   return (
     <div>
         <h1>statistics</h1>
-        <p>good {stats.good}</p>
-        <p>neutral {stats.neutral}</p>
-        <p>bad {stats.bad}</p>
-        <p>all {totalFeedback}</p>
-        <p>average {averageFeedback}</p>
-        <p>positive {positiveFeedbackPercent} %</p>
+        <StatisticLine label='good' value={stats.good}/>
+        <StatisticLine label='neutral' value={stats.neutral}/>
+        <StatisticLine label='bad' value={stats.bad}/>
+        <StatisticLine label='all' value={totalFeedback}/>
+        <StatisticLine label='average' value={averageFeedback}/>
+        <StatisticLine label='positive' value={positiveFeedbackPercent + " %"}/>
     </div>
   )
 }
