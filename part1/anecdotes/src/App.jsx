@@ -19,14 +19,20 @@ const App = () => {
   const handleVote = () => {
     const copy = [...points]
     copy[selected]++
-    if (copy[selected] > copy[bestAnecdote])
+    if (copy[selected] >= copy[bestAnecdote])
       setBestAnecdote(selected)
     setPoints(copy)
   }
 
   const selectRandomAnecdote = () => {
-    const rnd = Math.floor(Math.random() * (anecdotes.length))
-    setSelected(rnd)
+    while (true) {
+      const rnd = Math.floor(Math.random() * (anecdotes.length))
+      if (rnd !== selected)
+        {
+          setSelected(rnd)
+          break
+        }
+    }
   }
 
   return (
@@ -44,6 +50,7 @@ const App = () => {
       <div>
         <h1>Anecdote with most votes</h1>
         <p>{anecdotes[bestAnecdote]}</p>
+        <p>has {points[bestAnecdote]} votes</p>
       </div>
     </>
   )
