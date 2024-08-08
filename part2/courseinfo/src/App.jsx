@@ -1,10 +1,5 @@
 import Course from './components/Course'
 
-const Total = (props) => {
-  const total = props.parts.map(part => part.exercises).reduce((acc, x) => acc+x, 0)
-  return <p>Number of exercises {total}</p>
-}
-
 const App = () => {
   const course = {
     id: 1,
