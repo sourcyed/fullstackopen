@@ -37,7 +37,10 @@ const App = () => {
 
   const handleInput = setFunc => event => setFunc(event.target.value)
 
-
+  const delHandler = pToDel => () => {
+    if (window.confirm(`Delete ${pToDel.name} ?`))
+      personService.del(pToDel.id).then(setPersons(persons.filter(p => p.id !== pToDel.id)))
+  }
 
 
   return (
@@ -49,7 +52,7 @@ const App = () => {
       <PersonForm onSubmit={addPerson} newName={newName} newNumber={newNumber} handleNewName={handleInput(setNewName)} handleNewNumber={handleInput(setNewNumber)}/>
 
       <h3>Numbers</h3>
-      <Persons filterName={filterName} persons={persons}/>
+      <Persons filterName={filterName} persons={persons} delHandler={delHandler}/>
     </div>
   )
 }
