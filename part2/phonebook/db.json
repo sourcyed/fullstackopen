@@ -26,19 +26,9 @@
       "number": "21321"
     },
     {
-      "id": "b6dc",
-      "name": "Hello",
-      "number": "1231"
-    },
-    {
-      "id": "1c55",
-      "name": "Lala",
-      "number": "123"
-    },
-    {
-      "id": "9ae1",
-      "name": "New Person",
-      "number": "21321"
+      "id": "f7ad",
+      "name": "The person is not saved to server",
+      "number": "0123"
     }
   ]
 }

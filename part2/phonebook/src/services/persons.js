@@ -2,10 +2,17 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/persons/'
 
-const getAll = () => 
-    axios
+const getAll = () => {
+    const nonExisting = {
+        id: 10000,
+        name: 'This person is not saved to server',
+        number: '0000'
+    }
+      
+    return axios
       .get(baseUrl)
-      .then(r => r.data)
+      .then(r => r.data.concat(nonExisting))
+}
 
 const create = person =>
     axios

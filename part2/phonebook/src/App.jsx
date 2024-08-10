@@ -35,10 +35,10 @@ const App = () => {
 
     if (duplicate) {
       newPerson.id = duplicate.id
-      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)
         personService.update(newPerson)
           .then(nP => setPersons(persons.map(p => p.id !== nP.id ? p : nP)))
-          .catch(() => popNotification(`Information of ${newName} has already been removed from server`, 'error'))
+          .catch(() => handle404(newPerson))
     }
     else {
       personService.create(newPerson)
@@ -51,12 +51,16 @@ const App = () => {
   }
 
   const handleInput = setFunc => event => setFunc(event.target.value)
+  const handle404 = (deletedPerson) => {
+    popNotification(`Information of ${deletedPerson.name} has already been removed from server`, 'error')
+    setPersons(persons.filter(p => p.id !== deletedPerson.id))
+  }
 
   const delHandler = pToDel => () => {
     if (window.confirm(`Delete ${pToDel.name} ?`))
       personService.del(pToDel.id)
         .then(setPersons(persons.filter(p => p.id !== pToDel.id)))
-        .catch(() => popNotification(`${pToDel.name} is already deleted`, 'error'))
+        .catch(() => handle404(pToDel))
   }
 
 
