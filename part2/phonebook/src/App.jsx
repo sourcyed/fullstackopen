@@ -19,17 +19,20 @@ const App = () => {
     event.preventDefault()
     if (newName.trim() === '') return
 
-    if (persons.map(p => p.name).includes(newName)) {
-      alert (`${newName} is already added to phonebook`)
-      return
-    }
-
     const newPerson = {
       name: newName,
       number: newNumber
     }
 
-    personService.create(newPerson).then(p => setPersons(persons.concat(p)))
+    const duplicate = persons.find(p => p.name == newName)
+
+    if (duplicate) {
+      newPerson.id = duplicate.id
+      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+        personService.update(newPerson).then(nP => setPersons(persons.map(p => p.id !== nP.id ? p : nP)))
+    }
+    else
+      personService.create(newPerson).then(p => setPersons(persons.concat(p)))
 
     setNewName('')
     setNewNumber('')
