@@ -35,7 +35,7 @@ const App = () => {
 
     if (duplicate) {
       newPerson.id = duplicate.id
-      window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)
+      if (window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`))
         personService.update(newPerson)
           .then(nP => setPersons(persons.map(p => p.id !== nP.id ? p : nP)))
           .catch(() => handle404(newPerson))
