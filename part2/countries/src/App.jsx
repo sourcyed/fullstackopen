@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 function Country({country}) {
+    if (country === null) return
     return (
         <div>
             <h1>{country.name.common}</h1>
@@ -23,6 +24,8 @@ function Country({country}) {
 function App() {
     const [countries, updateCountries] = useState([])
     const [searchQuery, updateSearchQuery] = useState('')
+    const [selectedCountry, selectCountry] = useState(null)
+
     useEffect(() => {
         axios.get('https://studies.cs.helsinki.fi/restcountries/api/all').then(r => {
             updateCountries(r.data) 
@@ -30,6 +33,7 @@ function App() {
     }, [])
 
     const handleSearch = e => {
+        selectCountry(null)
         updateSearchQuery(e.target.value)
     }
 
@@ -38,13 +42,15 @@ function App() {
     return (
         <div>
             find countries: <input type="text" value={searchQuery} onChange={handleSearch} />
-            {searchQuery == '' ?'': filteredCountries.length > 10
+            {selectedCountry !== null ? (
+                <div><button onClick={() => selectCountry(null)}>return</button><br /><Country country={selectedCountry} /></div>
+            ) 
+            :
+            (searchQuery == '' ?'': filteredCountries.length > 10
                 ? <p>Too many matches, specify another filter</p>
-                : (filteredCountries.length == 1
-                    ? <Country country={filteredCountries[0]} />
-                    : <ul>{filteredCountries.map(c => <li key={c.name.common}>{c.name.common}</li>)}</ul>
-                )
-            }
+                : (filteredCountries.length === 1 ? selectCountry(filteredCountries[0]) : <ul>{filteredCountries.map(c => <li key={c.name.common}>{c.name.common} <button onClick={() => selectCountry(c)}>show</button></li>)}</ul>
+            )
+            )}
         </div>
     )
 }
