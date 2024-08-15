@@ -2,23 +2,18 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { fetchWeatherApi } from 'openmeteo'
 
-function Weather({city}) {
+function Weather({country}) {
     const [weatherDataResponse, setWeatherDataResponse] = useState(null)
-    const cityApiUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`
 
     useEffect(() => {
-        axios.get(cityApiUrl).then(r => {
-            if (!Object.hasOwn(r.data, 'results')) return
-            const loc = r.data.results[0]
             const params = {
-                "latitude": loc.latitude,
-                "longitude": loc.longitude,
+                "latitude": country.capitalInfo.latlng[0],
+                "longitude": country.capitalInfo.latlng[1],
                 "current": ["temperature_2m", "is_day", "wind_speed_10m"],
                 "forecast_days": 1
             };
             const url = "https://api.open-meteo.com/v1/forecast"
             fetchWeatherApi(url, params).then(r => setWeatherDataResponse(r[0]))
-    })
     }, [])
     
     if (!weatherDataResponse) return
@@ -48,7 +43,7 @@ function Weather({city}) {
 
     return (
         <div style={{color: 'white', width: 300, padding: 10, backgroundColor: weatherData.isDay ? '#FFDEAD' :  '#2e4482'}}>
-            <h3>Weather in {city}</h3>
+            <h3>Weather in {country.capital[0]}</h3>
             <p>temperature {weatherData.temperature.toFixed(2)} Celcius</p>
             <p>wind {weatherData.windSpeed.toFixed(2)} m/s</p>
         </div>
@@ -75,15 +70,38 @@ function Country({country}) {
 
             <img style={{border: 'solid black 2px'}} src={country.flags.png} alt={country.flags.alt} />
 
-            <Weather city={country.capital[0]} />
+            <Weather country={country} />
         </div>
+    )
+}
+
+function CountryList( {countries, showCountry  }) {
+    if (countries.length > 10) {
+        return (
+            <div>
+                Too many matches, specify another filter
+            </div>
+        )
+    }
+
+    if (countries.length === 1) {
+        return <Country country={countries[0]} />
+    }
+
+    return (
+        <ul>
+            {countries.map(c => 
+                <li key={c.name.common}>{c.name.common}
+                    <button onClick={() => showCountry(c.name.common)}>show</button>
+                </li>
+            )}
+        </ul>
     )
 }
 
 function App() {
     const [countries, updateCountries] = useState([])
     const [searchQuery, updateSearchQuery] = useState('')
-    const [selectedCountry, selectCountry] = useState(null)
 
     useEffect(() => {
         axios.get('https://studies.cs.helsinki.fi/restcountries/api/all').then(r => {
@@ -92,24 +110,19 @@ function App() {
     }, [])
 
     const handleSearch = e => {
-        selectCountry(null)
         updateSearchQuery(e.target.value)
     }
 
-    const filteredCountries = searchQuery == '' ? countries : countries.filter(c => c.name.common.toLowerCase().includes(searchQuery.toLowerCase()))
+    console.log(searchQuery);
+    
+    const filteredCountries =  countries.filter(c => c.name.common.toLowerCase().includes(searchQuery.toLowerCase()))
+    console.log(filteredCountries);
+    
 
     return (
         <div>
             find countries: <input type="text" value={searchQuery} onChange={handleSearch} />
-            {selectedCountry !== null ? (
-                <div><button onClick={() => selectCountry(null)}>return</button><br /><Country country={selectedCountry} /></div>
-            ) 
-            :
-            (searchQuery == '' ?'': filteredCountries.length > 10
-                ? <p>Too many matches, specify another filter</p>
-                : (filteredCountries.length === 1 ? selectCountry(filteredCountries[0]) : <ul>{filteredCountries.map(c => <li key={c.name.common}>{c.name.common} <button onClick={() => selectCountry(c)}>show</button></li>)}</ul>
-            )
-            )}
+            <CountryList countries={filteredCountries} showCountry={updateSearchQuery} />
         </div>
     )
 }
