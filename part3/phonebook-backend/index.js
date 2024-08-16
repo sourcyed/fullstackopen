@@ -50,6 +50,17 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+app.post('/api/persons', (request, response) => {
+    const person = request.body
+    if (person.name && person.number) {
+        person.id = String(Math.floor(Math.random() * 4294967296))
+        persons.push(person)
+        response.json(person)
+        return
+    }
+    response.status(400).end()
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log('Listening on port', PORT)
