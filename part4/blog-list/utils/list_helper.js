@@ -22,9 +22,20 @@ const mostBlogs = (blogs) => {
   return max
 }
 
+const mostLikes = (blogs) => {
+  let frequency = {}
+  blogs.forEach(x => frequency[x.author] = (frequency[x.author] || 0) + x.likes)
+  let max = { author: null, likes: 0}
+  for (const [key, value] of Object.entries(frequency))
+    if (value >= max.likes)
+      max = { author: key, likes: value}
+  return max
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
