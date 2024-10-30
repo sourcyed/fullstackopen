@@ -12,8 +12,19 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce((max, x) => x.likes > max.likes ? x : max, blogs[0])
 }
 
+const mostBlogs = (blogs) => {
+  let frequency = {}
+  blogs.forEach(x => frequency[x.author] = (frequency[x.author] || 0) + 1)
+  let max = { author: null, blogs: 0}
+  for (const [key, value] of Object.entries(frequency))
+    if (value >= max.blogs)
+      max = { author: key, blogs: value}
+  return max
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
