@@ -14,13 +14,26 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-test('returned blog count is correct', async () => {
+test.only('returned blogs have id property', async () => {
   const response = await api
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+  for (let blog of response.body) {
+    assert(Object.hasOwn(blog, 'id'))
+  }
+})
+
+test.only('returned blogs do not have _id property', async () => {
+  const response = await api
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    for (let blog of response.body) {
+      assert(!Object.hasOwn(blog, '_id'))
+    }
 })
 
 after(async () => {
