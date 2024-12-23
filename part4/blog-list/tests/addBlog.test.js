@@ -51,6 +51,17 @@ assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
 assert.strictEqual(response.body[response.body.length-1].likes, 0)
 })
 
+test('missing title or url gives bad request', async () => {
+  const newBlog = {
+    
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
