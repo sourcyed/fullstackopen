@@ -14,7 +14,7 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-test.only('returned blogs have id property', async () => {
+test('returned blogs have id property', async () => {
   const response = await api
     .get('/api/blogs')
     .expect(200)
@@ -25,7 +25,7 @@ test.only('returned blogs have id property', async () => {
   }
 })
 
-test.only('returned blogs do not have _id property', async () => {
+test('returned blogs do not have _id property', async () => {
   const response = await api
     .get('/api/blogs')
     .expect(200)
