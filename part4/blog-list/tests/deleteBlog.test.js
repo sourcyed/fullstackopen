@@ -15,7 +15,7 @@ describe('deleting blogs', () => {
     await Blog.insertMany(helper.initialBlogs)
   })
 
-  test('succeeds with status code 204 if is is valid', async () => {
+  test('succeeds with status code 204 if id is valid', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
