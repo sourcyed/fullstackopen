@@ -35,7 +35,6 @@ const userExtractor = async (request, response, next) => {
   if (!decodedToken.id) {
     return next()
   }
-  console.log('setting user')
 
   const user = await User.findById(decodedToken.id)
   request.user = user

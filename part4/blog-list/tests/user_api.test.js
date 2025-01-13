@@ -55,7 +55,7 @@ describe('when there is initially one user in db', () => {
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
-      
+
     assert(result.body.error.includes('expected `username` to be unique'))
 
     const usersAtEnd = await helper.usersInDb()
@@ -88,7 +88,7 @@ describe('when there is initially one user in db', () => {
     const newUser = {
       username: 'root2',
       name: 'John Doe',
-      password: 'password'
+      password: 'pa'
     }
 
     const result = await api
@@ -97,7 +97,7 @@ describe('when there is initially one user in db', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    assert(result.body.error.includes('User validation failed'))
+    assert(result.body.error.includes('password must be at least 3 characters long'))
 
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
