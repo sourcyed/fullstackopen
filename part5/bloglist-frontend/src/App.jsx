@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import axios from 'axios'
@@ -10,16 +10,26 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
+  useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
-  }, [user])
+  }, [])
 
   const handleLogin = async e => {
     e.preventDefault()
 
     try {
-      setUser((await axios.post('api/login', {username, password})).data)
+      const user = (await axios.post('api/login', {username, password})).data
+      setUser(user)
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
     } catch {
       window.alert('Invalid credentials!')
     }
@@ -33,6 +43,9 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+      <p>
+        <button onClick={() => { window.localStorage.removeItem('loggedUser'); setUser(null); }}>logout</button>
+      </p>
     </div> :
     <div>
       <form onSubmit={handleLogin}>
