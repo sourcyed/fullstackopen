@@ -3,7 +3,7 @@ import './App.css'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import axios from 'axios'
-import InfoBox from './components/InfoBox'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -37,8 +37,9 @@ const App = () => {
       const user = (await axios.post('api/login', {username, password})).data
       setUser(user)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      popNotification('Login successful.', 'confirmation')
     } catch {
-      window.alert('Invalid credentials!')
+      popNotification('wrong username or password', 'error')
     }
   }
 
@@ -52,21 +53,35 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      popNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'confirmation')
     } catch (error) {
-      window.alert(error)
+      popNotification(error.message, 'error')
     }
   }
 
+  const handleLogout = async setUser => {
+    window.localStorage.removeItem('loggedUser')
+    setUser(null)
+    popNotification('Logout successful.', 'confirmation')
+  }
+
+  const popNotification = (message, type) => {
+    const n = { message, type }
+    setNotification(n)
+    setTimeout(() => setNotification(null) , 5000)
+  }
+
+
   return (
     <div>
-      <InfoBox message={notification} />
+      <Notification notification={notification} />
 
       {user ?
         <div>
           <h2>blogs</h2>
           <p>{user.username} logged in</p>
           <p>
-            <button onClick={() => { window.localStorage.removeItem('loggedUser'); setUser(null); }}>logout</button>
+            <button onClick={() => { handleLogout(setUser) }}>logout</button>
           </p>
 
           <form onSubmit={handleCreate}>
@@ -112,3 +127,5 @@ const App = () => {
 }
 
 export default App
+
+
