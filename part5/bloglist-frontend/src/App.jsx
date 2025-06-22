@@ -68,7 +68,7 @@ const App = () => {
   const popNotification = (message, type) => {
     const n = { message, type }
     setNotification(n)
-    setTimeout(() => setNotification(null) , 5000)
+    setTimeout(() => setNotification(null) , 2000)
   }
 
 
