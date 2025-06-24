@@ -4,6 +4,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import axios from 'axios'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +16,7 @@ const App = () => {
   const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
 
+  const blogFormRef = useRef()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -54,6 +56,7 @@ const App = () => {
       setAuthor('')
       setUrl('')
       popNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'confirmation')
+      blogFormRef.current.toggleVisibility()
     } catch (error) {
       popNotification(error.message, 'error')
     }
@@ -84,24 +87,28 @@ const App = () => {
             <button onClick={() => { handleLogout(setUser) }}>logout</button>
           </p>
 
-          <form onSubmit={handleCreate}>
-            <p>
-              title: <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
-            </p>
-            <p>
-              author: <input type="text" value={author} onChange={e => setAuthor(e.target.value)} />
-            </p>
-            <p>
-              url: <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
-            </p>
-            <p>
-              <input type="submit" value="create" />
-            </p>
-          </form>
+          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+            <form onSubmit={handleCreate}>
+              <p>
+                title: <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+              </p>
+              <p>
+                author: <input type="text" value={author} onChange={e => setAuthor(e.target.value)} />
+              </p>
+              <p>
+                url: <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
+              </p>
+              <p>
+                <input type="submit" value="create" />
+              </p>
+            </form>
+          </Togglable>
 
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+          <ul>
+            {blogs.map(blog =>
+              <li><Blog key={blog.id} blog={blog} /></li>
+            )}
+          </ul>
         </div>
         :
         <div>
