@@ -5,15 +5,13 @@ import blogService from './services/blogs'
 import axios from 'axios'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
 
   const blogFormRef = useRef()
@@ -45,16 +43,10 @@ const App = () => {
     }
   }
 
-  const handleCreate = async e => {
-    e.preventDefault()
-
+  const handleCreate = async (blog) => {
     try {
-      const blog = { title, author, url }
       const { data: newBlog } = await axios.post('api/blogs', blog, {headers: { Authorization: `Bearer ${user.token}`}})
       setBlogs([...blogs, newBlog])
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       popNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'confirmation')
       blogFormRef.current.toggleVisibility()
     } catch (error) {
@@ -88,25 +80,12 @@ const App = () => {
           </p>
 
           <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-            <form onSubmit={handleCreate}>
-              <p>
-                title: <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
-              </p>
-              <p>
-                author: <input type="text" value={author} onChange={e => setAuthor(e.target.value)} />
-              </p>
-              <p>
-                url: <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
-              </p>
-              <p>
-                <input type="submit" value="create" />
-              </p>
-            </form>
+            <BlogForm handleCreate={handleCreate} />
           </Togglable>
 
           <ul>
             {blogs.map(blog =>
-              <li><Blog key={blog.id} blog={blog} /></li>
+              <Blog key={blog.id} blog={blog} />
             )}
           </ul>
         </div>
