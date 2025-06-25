@@ -69,11 +69,10 @@ const App = () => {
   const onLike = async (blog) => {
     try {
       const { data: newBlog } = await axios.put('api/blogs/' + blog.id, { ...blog, likes: blog.likes + 1, user: blog.user._id })
-      setBlogs(blogs.map(b => b.id != blog.id ? b : newBlog))
+      setBlogs(blogs.map(b => b.id != blog.id ? b : newBlog).sort((a, b) => b.likes - a.likes))
     } catch (error) {
       popNotification(error.message, 'error')
     }
-
   }
 
   return (
