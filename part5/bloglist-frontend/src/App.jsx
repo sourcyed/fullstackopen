@@ -66,6 +66,15 @@ const App = () => {
     setTimeout(() => setNotification(null) , 2000)
   }
 
+  const onLike = async (blog) => {
+    try {
+      const { data: newBlog } = await axios.put('api/blogs/' + blog.id, { ...blog, likes: blog.likes + 1, user: blog.user._id })
+      setBlogs(blogs.map(b => b.id != blog.id ? b : newBlog))
+    } catch (error) {
+      popNotification(error.message, 'error')
+    }
+
+  }
 
   return (
     <div>
@@ -85,7 +94,7 @@ const App = () => {
 
           <div>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} onLike={onLike}/>
             )}
           </div>
         </div>
