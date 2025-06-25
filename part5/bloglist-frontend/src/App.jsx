@@ -21,12 +21,13 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
     }
   }, [])
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     )
   }, [])
 
@@ -37,6 +38,7 @@ const App = () => {
       const user = (await axios.post('api/login', {username, password})).data
       setUser(user)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
       popNotification('Login successful.', 'confirmation')
     } catch {
       popNotification('wrong username or password', 'error')
@@ -45,16 +47,16 @@ const App = () => {
 
   const handleCreate = async (blog) => {
     try {
-      const { data: newBlog } = await axios.post('api/blogs', blog, {headers: { Authorization: `Bearer ${user.token}`}})
-      setBlogs([...blogs, newBlog])
-      popNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'confirmation')
+      const { data: newBlog } = await axios.post('api/blogs', blog)
+      setBlogs(prev => [...prev, newBlog].sort((a, b) => b.likes - a.likes))
+      popNotification(`a new blog ${newBlog.title} by ${newBlog.author} added.`, 'confirmation')
       blogFormRef.current.toggleVisibility()
     } catch (error) {
       popNotification(error.message, 'error')
     }
   }
 
-  const handleLogout = async setUser => {
+  const handleLogout = async () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
     popNotification('Logout successful.', 'confirmation')
@@ -68,10 +70,27 @@ const App = () => {
 
   const onLike = async (blog) => {
     try {
-      const { data: newBlog } = await axios.put('api/blogs/' + blog.id, { ...blog, likes: blog.likes + 1, user: blog.user._id })
+      console.log(JSON.stringify(blog))
+      const { data: updated } = await axios.put('api/blogs/' + blog.id, { ...blog, likes: blog.likes + 1, user: blog.user.id })
+      const newBlog = { ...updated, user: blog.user }
+      console.log(JSON.stringify(newBlog))
       setBlogs(blogs.map(b => b.id != blog.id ? b : newBlog).sort((a, b) => b.likes - a.likes))
+      popNotification('Blog liked.', 'confirmation')
     } catch (error) {
       popNotification(error.message, 'error')
+    }
+  }
+
+  const onDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      try {
+        await axios.delete('api/blogs/' + blog.id)
+        setBlogs(blogs.filter(b => b.id != blog.id))
+        popNotification('Blog deleted.', 'confirmation')
+
+      } catch (error) {
+        popNotification(error.message, 'error')
+      }
     }
   }
 
@@ -84,7 +103,7 @@ const App = () => {
           <h2>blogs</h2>
           <p>{user.username} logged in</p>
           <p>
-            <button onClick={() => { handleLogout(setUser) }}>logout</button>
+            <button onClick={() => { handleLogout() }}>logout</button>
           </p>
 
           <Togglable buttonLabel='create new blog' ref={blogFormRef}>
@@ -93,7 +112,7 @@ const App = () => {
 
           <div>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} onLike={onLike}/>
+              <Blog key={blog.id} blog={blog} onLike={onLike} user={user} onDelete={onDelete} />
             )}
           </div>
         </div>
