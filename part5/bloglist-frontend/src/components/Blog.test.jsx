@@ -10,15 +10,15 @@ describe('<Blog />', () => {
     username: 'myUsername'
   }
 
-  test('only renders title and author when unexpanded', async () => {
-    const blog = {
-      title: 'Blog Title',
-      author: 'Blog Author',
-      url: 'Blog URL',
-      likes: 0,
-      user: user
-    }
+  const blog = {
+    title: 'Blog Title',
+    author: 'Blog Author',
+    url: 'Blog URL',
+    likes: 0,
+    user: user
+  }
 
+  test('only renders title and author when unexpanded', async () => {
     render(<Blog blog={blog} onLike={func} user={user} onDelete={func}/>)
     const url = screen.queryByText('Blog Author')
     const likes = screen.queryByText('likes', { exact: false })
@@ -28,14 +28,6 @@ describe('<Blog />', () => {
   })
 
   test('renders url and number of likes after button click', async () => {
-    const blog = {
-      title: 'Blog Title',
-      author: 'Blog Author',
-      url: 'Blog URL',
-      likes: 0,
-      user: user
-    }
-
     render(<Blog blog={blog} onLike={() => null} user={user} onDelete={() => null}/>)
     const testUser = userEvent.setup()
     const button = screen.getByText('view')
@@ -48,4 +40,18 @@ describe('<Blog />', () => {
     expect(likes).not.toHaveStyle('display: none')
   })
 
+  test('like button clicked twice', async () => {
+    const mockHandler = vi.fn()
+
+    render(<Blog blog={blog} onLike={mockHandler} user={user} onDelete={() => null}/>)
+    const testUser = userEvent.setup()
+    const viewButton = screen.queryByText('view')
+    await testUser.click(viewButton)
+
+    const likeButton = screen.queryByText('like')
+    await testUser.click(likeButton)
+    await testUser.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+  })
 })
