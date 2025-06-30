@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import Togglable from './Togglable'
 
 const Blog = ({ blog, onLike, user, onDelete }) => {
   const [expanded, setExpanded] = useState(false)
 
   return (
-    <div style={{ border: '1px solid black', margin: '10px 10px 10px 10px', padding: '10px 10px 10px 10px' }}>
+    <div className='blog' style={{ border: '1px solid black', margin: '10px 10px 10px 10px', padding: '10px 10px 10px 10px' }}>
       <p>
         {blog.title} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'view'}</button>
       </p>
@@ -21,7 +20,7 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
         </p>
         <p>
           {
-            user.username == blog.user.username ?
+            user.username === blog.user.username ?
               <button onClick={(_) => onDelete(blog) }>remove</button>
               :
               ''
