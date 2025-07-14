@@ -38,12 +38,17 @@ const App = () => {
       if (window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`))
         personService.update(newPerson)
           .then(nP => setPersons(persons.map(p => p.id !== nP.id ? p : nP)))
-          .catch(() => handle404(newPerson))
+          .catch(error => {
+            popNotification(error.message, 'error')
+          })
     }
     else {
       personService.create(newPerson)
         .then(p => setPersons(persons.concat(p)))
         .then(() => popNotification('Added ' + newName, 'confirmation'))
+        .catch(error => {
+          popNotification(error.response.data.error, 'error')
+        })
     }
 
     setNewName('')
