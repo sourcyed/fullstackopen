@@ -6,6 +6,7 @@ import axios from 'axios'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -74,7 +75,7 @@ const App = () => {
       const { data: updated } = await axios.put('api/blogs/' + blog.id, { ...blog, likes: blog.likes + 1, user: blog.user.id })
       const newBlog = { ...updated, user: blog.user }
       console.log(JSON.stringify(newBlog))
-      setBlogs(blogs.map(b => b.id != blog.id ? b : newBlog).sort((a, b) => b.likes - a.likes))
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : newBlog).sort((a, b) => b.likes - a.likes))
       popNotification('Blog liked.', 'confirmation')
     } catch (error) {
       popNotification(error.message, 'error')
@@ -110,29 +111,20 @@ const App = () => {
             <BlogForm handleCreate={handleCreate} />
           </Togglable>
 
-          <div>
+          <div className='blogs'>
             {blogs.map(blog =>
               <Blog key={blog.id} blog={blog} onLike={onLike} user={user} onDelete={onDelete} />
             )}
           </div>
         </div>
         :
-        <div>
-          <form onSubmit={handleLogin}>
-            <h2>log in to application</h2>
-            <p>
-              username
-              <input type="text" value={username} onChange={e => setUsername(e.currentTarget.value)} />
-            </p>
-            <p>
-              password
-              <input type="password" value={password} onChange={e => setPassword(e.currentTarget.value)} />
-            </p>
-            <p>
-              <input type="submit" value="login" />
-            </p>
-          </form>
-        </div>
+        <LoginForm
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+        />
       }
 
     </div>

@@ -8,7 +8,7 @@ const BlogForm = ({handleCreate}) => {
 
   const addBlog = (event) => {
     event.preventDefault()
-    handleCreate({title, author, url})
+    handleCreate({ title, author, url })
 
     setTitle('')
     setAuthor('')
@@ -16,20 +16,20 @@ const BlogForm = ({handleCreate}) => {
   }
 
   return (
-    <form onSubmit={ addBlog }>
-        <p>
-          title: <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
-        </p>
-        <p>
-          author: <input type="text" value={author} onChange={e => setAuthor(e.target.value)} />
-        </p>
-        <p>
-          url: <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
-        </p>
-        <p>
-          <input type="submit" value="create" />
-        </p>
-      </form>
+    <form onSubmit={ addBlog } className='formDiv'>
+      <p>
+        title: <input type="text" value={title} onChange={e => setTitle(e.target.value) } placeholder='write title here' />
+      </p>
+      <p>
+        author: <input type="text" value={author} onChange={e => setAuthor(e.target.value)} placeholder='write author here' />
+      </p>
+      <p>
+        url: <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder='write url here' />
+      </p>
+      <p>
+        <input type="submit" value="create" />
+      </p>
+    </form>
   )
 }
 
