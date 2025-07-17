@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Routes, Route, useMatch } from 'react-router-dom'
+import { Link, Routes, Route, useMatch, useNavigate } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -58,6 +58,7 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -67,6 +68,9 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    props.setNotification(`a new anecdote '${content}' created!`)
+    setTimeout(() => props.setNotification(''), 5000)
+    navigate('/')
   }
 
   return (
@@ -139,10 +143,11 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <h4>{notification}</h4>
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
-        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} setNotification={setNotification} />} />
         <Route path="/anecdotes/:id" element={<AnecdoteView anecdote={anecdote} />} />
       </Routes>
       <Footer />
