@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useReducer, useContext } from "react";
+import { createContext, useReducer } from "react";
 import notificationReducer from "./notificationReducer";
 
 const NotificationContext = createContext()
