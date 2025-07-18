@@ -74,10 +74,17 @@ const CreateNew = (props) => {
     navigate('/')
   }
 
+  const handleReset = (e) => {
+    e.preventDefault()
+    contentField.onReset()
+    authorField.onReset()
+    infoField.onReset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onReset={handleReset}>
         <div>
           content
           <input name='content' {...contentField} />
@@ -90,7 +97,8 @@ const CreateNew = (props) => {
           url for more info
           <input name='info' {...infoField} />
         </div>
-        <button>create</button>
+        <input type='submit' value='create' />
+        <input type='reset' value='reset' />
       </form>
     </div>
   )
