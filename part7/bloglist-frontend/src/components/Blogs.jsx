@@ -4,12 +4,10 @@ import Togglable from './Togglable'
 import BlogForm from './BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from '../reducers/notificationReducer'
-import { createBlog, likeBlog, deleteBlog } from '../reducers/blogsReducer'
+import { createBlog } from '../reducers/blogsReducer'
 import { Link } from 'react-router-dom'
 
-
-
-const Dashboard = () => {
+const Blogs = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(({ blogs }) =>
     [...blogs].sort((a, b) => b.likes - a.likes)
@@ -21,7 +19,7 @@ const Dashboard = () => {
     try {
       dispatch(createBlog(blog))
       popNotification(
-        `a new blog ${blog.title} by ${blog.author} added.`,
+        `A new blog "${blog.title}" by ${blog.author} added.`,
         'confirmation'
       )
       blogFormRef.current.toggleVisibility()
@@ -36,20 +34,31 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm handleCreate={handleCreate} />
-      </Togglable>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="mb-6">
+        <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
+          <BlogForm handleCreate={handleCreate} />
+        </Togglable>
+      </div>
 
-      <div className="blogs">
+      <div className="space-y-4">
         {blogs.map((blog) => (
-          <p key={blog.id}>
-            <Link  to={'blogs/' + blog.id}>{blog.title}</Link>
-          </p>
+          <div
+            key={blog.id}
+            className="border border-gray-200 rounded-lg px-4 py-3 bg-white hover:shadow-md transition-shadow"
+          >
+            <Link
+              to={`/blogs/${blog.id}`}
+              className="text-blue-600 hover:underline text-lg font-medium"
+            >
+              {blog.title}
+            </Link>
+            <p className="text-sm text-gray-500">by {blog.author}</p>
+          </div>
         ))}
       </div>
     </div>
   )
 }
 
-export default Dashboard
+export default Blogs
