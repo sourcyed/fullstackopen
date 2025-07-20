@@ -9,14 +9,14 @@ const notificationSlice = createSlice({
     },
     resetNotification(state, action) {
       return ''
-    }
-  }
+    },
+  },
 })
 
 export const { setNotification, resetNotification } = notificationSlice.actions
 
 export const addNotification = (notification, delay) => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(setNotification(notification))
     setTimeout(() => dispatch(resetNotification()), delay * 1000)
   }

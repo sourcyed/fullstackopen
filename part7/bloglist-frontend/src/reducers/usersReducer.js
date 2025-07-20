@@ -8,7 +8,7 @@ const userSlice = createSlice({
     setUsers(state, action) {
       return action.payload
     },
-  }
+  },
 })
 
 export const { setUsers } = userSlice.actions

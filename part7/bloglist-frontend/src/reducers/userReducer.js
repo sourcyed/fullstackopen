@@ -13,8 +13,8 @@ const userSlice = createSlice({
     logout(state, action) {
       window.localStorage.removeItem('loggedUser')
       return null
-    }
-  }
+    },
+  },
 })
 
 export const { setUser, logout } = userSlice.actions

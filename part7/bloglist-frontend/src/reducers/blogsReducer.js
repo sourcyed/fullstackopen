@@ -14,7 +14,7 @@ const blogsSlice = createSlice({
     replaceBlog(state, action) {
       console.log('still replacing')
       const newBlog = action.payload
-      const index = state.findIndex(blog => blog.id === newBlog.id)
+      const index = state.findIndex((blog) => blog.id === newBlog.id)
       console.log(state[index])
       console.log(newBlog)
       state[index] = newBlog
@@ -25,8 +25,8 @@ const blogsSlice = createSlice({
       const filtered = state.filter((blog) => blog.id !== targetBlog.id)
       console.log(`${state.length} - ${filtered.length}`)
       return filtered
-    }
-  }
+    },
+  },
 })
 
 export const { setBlogs, addBlog, replaceBlog, removeBlog } = blogsSlice.actions

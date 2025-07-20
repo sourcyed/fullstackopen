@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Blog from './components/Blog'
 import axios from 'axios'
@@ -12,13 +13,13 @@ import { createBlog, initializeBlogs, likeBlog, deleteBlog } from './reducers/bl
 import { loginUser, logout } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import Users from './components/Users'
+import User from './components/User'
+import Dashboard from './components/Dashboard'
 
 const App = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  const blogFormRef = useRef()
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -33,7 +34,6 @@ const App = () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
     console.log(`Bearer ${user.token}`)
   }
-  const blogs = useSelector(({ blogs }) => [...blogs].sort((a, b) => b.likes - a.likes))
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -46,18 +46,7 @@ const App = () => {
     }
   }
 
-  const handleCreate = async (blog) => {
-    try {
-      dispatch(createBlog(blog))
-      popNotification(
-        `a new blog ${blog.title} by ${blog.author} added.`,
-        'confirmation'
-      )
-      blogFormRef.current.toggleVisibility()
-    } catch (error) {
-      popNotification(error.message, 'error')
-    }
-  }
+
 
   const handleLogout = async () => {
     dispatch(logout())
@@ -69,25 +58,7 @@ const App = () => {
     dispatch(addNotification(n, 5))
   }
 
-  const onLike = async (blog) => {
-    try {
-      dispatch(likeBlog(blog))
-      popNotification('Blog liked.', 'confirmation')
-    } catch (error) {
-      popNotification(error.message, 'error')
-    }
-  }
 
-  const onDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      try {
-        dispatch(deleteBlog(blog))
-        popNotification('Blog deleted.', 'confirmation')
-      } catch (error) {
-        popNotification(error.message, 'error')
-      }
-    }
-  }
 
   return (
     <div>
@@ -107,23 +78,12 @@ const App = () => {
             </button>
           </p>
 
-          <Users />
+          <Routes>
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
+            <Route path="/" element={<Dashboard />} />
+          </Routes>
 
-          {/* <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm handleCreate={handleCreate} />
-          </Togglable>
-
-          <div className="blogs">
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                onLike={onLike}
-                user={user}
-                onDelete={onDelete}
-              />
-            ))}
-          </div> */}
         </div>
       ) : (
         <LoginForm
