@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from './reducers/notificationReducer'
 import { createBlog, initializeBlogs, likeBlog, deleteBlog } from './reducers/blogsReducer'
 import { loginUser, logout } from './reducers/userReducer'
+import { initializeUsers } from './reducers/usersReducer'
+import Users from './components/Users'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -20,6 +22,10 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(initializeUsers())
   }, [dispatch])
 
   const user = useSelector(({ user }) => user)
@@ -101,7 +107,9 @@ const App = () => {
             </button>
           </p>
 
-          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+          <Users />
+
+          {/* <Togglable buttonLabel="create new blog" ref={blogFormRef}>
             <BlogForm handleCreate={handleCreate} />
           </Togglable>
 
@@ -115,7 +123,7 @@ const App = () => {
                 onDelete={onDelete}
               />
             ))}
-          </div>
+          </div> */}
         </div>
       ) : (
         <LoginForm
