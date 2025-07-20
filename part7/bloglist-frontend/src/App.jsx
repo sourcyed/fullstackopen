@@ -9,40 +9,31 @@ import LoginForm from './components/LoginForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from './reducers/notificationReducer'
 import { createBlog, initializeBlogs, likeBlog, deleteBlog } from './reducers/blogsReducer'
+import { loginUser, logout } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogFormRef = useRef()
 
-
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
-    }
-  }, [])
-
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
+  const user = useSelector(({ user }) => user)
+  if (user) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
+    console.log(`Bearer ${user.token}`)
+  }
   const blogs = useSelector(({ blogs }) => [...blogs].sort((a, b) => b.likes - a.likes))
 
   const handleLogin = async (e) => {
     e.preventDefault()
 
     try {
-      const user = (await axios.post('api/login', { username, password })).data
-      setUser(user)
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
-      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
+      await dispatch(loginUser(username, password))
       popNotification('Login successful.', 'confirmation')
     } catch {
       popNotification('wrong username or password', 'error')
@@ -63,8 +54,7 @@ const App = () => {
   }
 
   const handleLogout = async () => {
-    window.localStorage.removeItem('loggedUser')
-    setUser(null)
+    dispatch(logout())
     popNotification('Logout successful.', 'confirmation')
   }
 
