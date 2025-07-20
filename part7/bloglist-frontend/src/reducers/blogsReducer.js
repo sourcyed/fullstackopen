@@ -12,18 +12,13 @@ const blogsSlice = createSlice({
       state.push(action.payload)
     },
     replaceBlog(state, action) {
-      console.log('still replacing')
       const newBlog = action.payload
       const index = state.findIndex((blog) => blog.id === newBlog.id)
-      console.log(state[index])
-      console.log(newBlog)
       state[index] = newBlog
-      console.log(state[index])
     },
     removeBlog(state, action) {
       const targetBlog = action.payload
       const filtered = state.filter((blog) => blog.id !== targetBlog.id)
-      console.log(`${state.length} - ${filtered.length}`)
       return filtered
     },
   },
@@ -47,7 +42,6 @@ export const initializeBlogs = () => {
 
 export const likeBlog = (blog) => {
   return async (dispatch) => {
-    console.log('liking blog')
     const newBlog = await blogService.likeBlog(blog)
     dispatch(replaceBlog(newBlog))
   }

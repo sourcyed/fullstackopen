@@ -32,7 +32,6 @@ const App = () => {
   const user = useSelector(({ user }) => user)
   if (user) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
-    console.log(`Bearer ${user.token}`)
   }
 
   const handleLogin = async (e) => {
@@ -82,6 +81,7 @@ const App = () => {
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<User />} />
             <Route path="/" element={<Dashboard />} />
+            <Route path="/blogs/:id" element={<Blog />} />
           </Routes>
 
         </div>

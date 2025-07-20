@@ -5,6 +5,8 @@ import BlogForm from './BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from '../reducers/notificationReducer'
 import { createBlog, likeBlog, deleteBlog } from '../reducers/blogsReducer'
+import { Link } from 'react-router-dom'
+
 
 
 const Dashboard = () => {
@@ -14,7 +16,6 @@ const Dashboard = () => {
   )
 
   const blogFormRef = useRef()
-  const user = useSelector(({ user }) => user)
 
   const handleCreate = async (blog) => {
     try {
@@ -26,26 +27,6 @@ const Dashboard = () => {
       blogFormRef.current.toggleVisibility()
     } catch (error) {
       popNotification(error.message, 'error')
-    }
-  }
-
-  const onLike = async (blog) => {
-    try {
-      dispatch(likeBlog(blog))
-      popNotification('Blog liked.', 'confirmation')
-    } catch (error) {
-      popNotification(error.message, 'error')
-    }
-  }
-
-  const onDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      try {
-        dispatch(deleteBlog(blog))
-        popNotification('Blog deleted.', 'confirmation')
-      } catch (error) {
-        popNotification(error.message, 'error')
-      }
     }
   }
 
@@ -62,13 +43,9 @@ const Dashboard = () => {
 
       <div className="blogs">
         {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            onLike={onLike}
-            user={user}
-            onDelete={onDelete}
-          />
+          <p key={blog.id}>
+            <Link  to={'blogs/' + blog.id}>{blog.title}</Link>
+          </p>
         ))}
       </div>
     </div>

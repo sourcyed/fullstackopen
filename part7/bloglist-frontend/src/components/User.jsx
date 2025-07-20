@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux'
 const User = () => {
   const users = useSelector(({ users }) => users)
   const match = useMatch('/users/:id')
-  console.log(match)
-  console.log(users)
   const user = match
     ? users.find((user) => user.id === match.params.id)
     : null
