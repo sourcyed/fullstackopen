@@ -7,13 +7,15 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import { useDispatch } from 'react-redux'
+import { addNotification } from './reducers/notificationReducer'
 
 const App = () => {
+  const dispatch = useDispatch()
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -68,8 +70,7 @@ const App = () => {
 
   const popNotification = (message, type) => {
     const n = { message, type }
-    setNotification(n)
-    setTimeout(() => setNotification(null), 2000)
+    dispatch(addNotification(n, 5))
   }
 
   const onLike = async (blog) => {
@@ -107,7 +108,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification notification={notification} />
+      <Notification />
 
       {user ? (
         <div>
