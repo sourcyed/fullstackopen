@@ -1,23 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import axios from 'axios'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from './reducers/notificationReducer'
+import { createBlog, initializeBlogs } from './reducers/blogsReducer'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogFormRef = useRef()
+
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -29,10 +30,10 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  const blogs = useSelector(({ blogs }) => [...blogs].sort((a, b) => b.likes - a.likes))
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -50,10 +51,9 @@ const App = () => {
 
   const handleCreate = async (blog) => {
     try {
-      const { data: newBlog } = await axios.post('api/blogs', blog)
-      setBlogs((prev) => [...prev, newBlog].sort((a, b) => b.likes - a.likes))
+      dispatch(createBlog(blog))
       popNotification(
-        `a new blog ${newBlog.title} by ${newBlog.author} added.`,
+        `a new blog ${blog.title} by ${blog.author} added.`,
         'confirmation'
       )
       blogFormRef.current.toggleVisibility()
