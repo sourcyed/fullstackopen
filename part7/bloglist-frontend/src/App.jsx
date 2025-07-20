@@ -8,7 +8,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs } from './reducers/blogsReducer'
+import { createBlog, initializeBlogs, likeBlog, deleteBlog } from './reducers/blogsReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -75,19 +75,7 @@ const App = () => {
 
   const onLike = async (blog) => {
     try {
-      console.log(JSON.stringify(blog))
-      const { data: updated } = await axios.put('api/blogs/' + blog.id, {
-        ...blog,
-        likes: blog.likes + 1,
-        user: blog.user.id,
-      })
-      const newBlog = { ...updated, user: blog.user }
-      console.log(JSON.stringify(newBlog))
-      setBlogs(
-        blogs
-          .map((b) => (b.id !== blog.id ? b : newBlog))
-          .sort((a, b) => b.likes - a.likes)
-      )
+      dispatch(likeBlog(blog))
       popNotification('Blog liked.', 'confirmation')
     } catch (error) {
       popNotification(error.message, 'error')
@@ -97,8 +85,7 @@ const App = () => {
   const onDelete = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
-        await axios.delete('api/blogs/' + blog.id)
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
+        dispatch(deleteBlog(blog))
         popNotification('Blog deleted.', 'confirmation')
       } catch (error) {
         popNotification(error.message, 'error')
