@@ -67,6 +67,14 @@ const Blog = () => {
             ''
           )}
         </p>
+        <div>
+          <h3>comments</h3>
+          <ul>
+            {blog.comments.map((comment, index) => (
+              <li key={`${blog.id}/comments/${index}`}>{comment}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

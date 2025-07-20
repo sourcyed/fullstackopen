@@ -4,8 +4,6 @@ import './App.css'
 import Blog from './components/Blog'
 import axios from 'axios'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
-import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNotification } from './reducers/notificationReducer'
@@ -14,7 +12,8 @@ import { loginUser, logout } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import Users from './components/Users'
 import User from './components/User'
-import Dashboard from './components/Dashboard'
+import Blogs from './components/Blogs'
+import Menu from './components/Menu'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -61,10 +60,12 @@ const App = () => {
 
   return (
     <div>
+
       <Notification />
 
       {user ? (
         <div>
+          <Menu />
           <h2>blogs</h2>
           <p>{user.username} logged in</p>
           <p>
@@ -80,7 +81,7 @@ const App = () => {
           <Routes>
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<User />} />
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Blogs />} />
             <Route path="/blogs/:id" element={<Blog />} />
           </Routes>
 
